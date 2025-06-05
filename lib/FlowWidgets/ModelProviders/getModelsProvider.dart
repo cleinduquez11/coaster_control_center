@@ -136,6 +136,70 @@ Future<List<Map<String, dynamic>>> getModelsJson() async {
   return data;
 }
 
+
+Future<List<Map<String, dynamic>>> getFloodModelsJson() async {
+  String curDir = Directory.current.path;
+  String filePath = '$curDir${sndPath}flood\\models\\models.json';
+  final modelListfile = File(filePath);
+  List<Map<String, dynamic>> data = [];
+  if (await modelListfile.exists()) {
+    String jsonString = await modelListfile.readAsString();
+    print(jsonString);
+
+    List<dynamic> decoded = jsonDecode(jsonString);
+    print(decoded);
+
+    // print(decoded);
+
+
+
+  for (var model in decoded) {
+    data.add({
+        'name': model['name'],
+      },);
+  }
+
+
+//     decoded.forEach((model) {
+
+//     //   data.add(
+//     //   {
+//     //     'name': model['name'],
+//     //     'position': LatLng(double.parse(model['position']['lat']), double.parse(model['position']['long'])),
+//     //     'zoom': double.parse(model['zoom']),
+//     //     'image': model['image'],
+//     //     'extents': {
+//     //       'southWest': LatLng(double.parse(model['southWest'][0]), double.parse(model['southWest'][1])),
+//     //       'northEast': LatLng(double.parse(model['northEast'][0]), double.parse(model['northEast'][1])),
+//     //     },
+//     //   },
+//     // );
+// // \\flow\\models\\
+    
+//       data.add(
+//       {
+//         'name': model['name'],
+//         'position': LatLng(model['position']['lat'], model['position']['long']),
+//         'zoom': model['zoom'],
+//         'image':  '$curDir${sndPath}flow\\models\\${model['image']}' ,
+//         'extents': {
+//           'southWest': LatLng(model['extents']['southWest'][0], model['extents']['southWest'][1]),
+//           'northEast': LatLng(model['extents']['northEast'][0], model['extents']['northEast'][1]),
+//         },
+//       },
+//     );
+
+    
+   
+   
+//     });
+  }
+
+  
+    // print(data);
+  return data;
+}
+
 Future<List<Map<String, dynamic>>> getModelsExample() async {
   return [
     {

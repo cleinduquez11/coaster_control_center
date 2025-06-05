@@ -167,20 +167,23 @@ class _LandingPageState extends State<LandingPage> {
                   ),
                 ),
                 const SizedBox(height: 200),
-                HoverElevatedButtonIcon(
-                       padding: EdgeInsets.fromLTRB(8,8,20,12),
-                     icon: Icon(Icons.tsunami_sharp, color: Colors.white,),
-                    primaryColor: Colors.blue,
-                                    hoverColor: Colors.black,
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const LMap(),
-                    ));
-                    // Handle Simulation Area button press
-                  },
-                  label: 
-                    'WAVES Simulation Area',
-                  
+                Tooltip(
+                  message: "Simulate Wave Scenarios with Customizable Domain",
+                  child: HoverElevatedButtonIcon(
+                         padding: EdgeInsets.fromLTRB(8,8,14,8),
+                       icon: Icon(Icons.tsunami_sharp, color: Colors.white,),
+                      primaryColor: Colors.blue,
+                                      hoverColor: Colors.black,
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const LMap(),
+                      ));
+                      // Handle Simulation Area button press
+                    },
+                    label: 
+                      'WAVES Simulation Area',
+                    
+                  ),
                 ),
                 const SizedBox(height: 20),
                 HoverElevatedButtonIcon(
@@ -215,7 +218,7 @@ class _LandingPageState extends State<LandingPage> {
                     // Handle Visualization Area button press
                   },
                   label: 
-                    'Flood Simulation Area',
+                    'FLOOD Simulation Area',
                 
                 ),
 
@@ -233,7 +236,7 @@ class _LandingPageState extends State<LandingPage> {
                     // Handle Visualization Area button press
                   },
                   label: 
-                    'Storm Surge Analysis',
+                    'STORM SURGE Analysis',
                 
                 ),
                                 const SizedBox(height: 20),

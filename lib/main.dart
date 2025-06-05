@@ -10,7 +10,7 @@ import 'package:coaster_control_center/FlowWidgets/ModelProviders/RunModelProvid
 import 'package:coaster_control_center/FlowWidgets/ModelProviders/changeModelProvider.dart';
 import 'package:coaster_control_center/FlowWidgets/ModelProviders/postProcessingProvider.dart';
 import 'package:coaster_control_center/FlowWidgets/Sandbox/DragUpButtonOverlay.dart';
-import 'package:coaster_control_center/IntegratedModelWidgets/IntegratedModelProviders/IntegrateAddFloodModel.dart';
+import 'package:coaster_control_center/IntegratedModelWidgets/IntegratedModelProviders/IntegratedModelProvider.dart';
 import 'package:coaster_control_center/SSI/SSI_RUN.dart';
 import 'package:coaster_control_center/provider/DirProvider.dart';
 import 'package:coaster_control_center/provider/FIleTopographyProvider.dart';
@@ -47,7 +47,7 @@ import 'package:window_manager/window_manager.dart';
 
 import 'LandingPage.dart';
 
-Future <void> main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
@@ -101,12 +101,12 @@ Future <void> main() async {
     ChangeNotifierProvider(create: (_) => AddModelProvider()),
     ChangeNotifierProvider(create: (_) => ChangeModelProvider()),
     ChangeNotifierProvider(create: (_) => RunModelProvider()),
-        ChangeNotifierProvider(create: (_) => RUNSSI()),
-                ChangeNotifierProvider(create: (_) => RUNBC()),
-                   ChangeNotifierProvider(create: (_) => PostProcessingProvider()),
-                      ChangeNotifierProvider(create: (_) => IntegrateAddFloodModelProvider()),
-                         ChangeNotifierProvider(create: (_) => AddFloodModelProvider()),
-            // ChangeNotifierProvider(create: (_) => TabControllerProvider()),
+    ChangeNotifierProvider(create: (_) => RUNSSI()),
+    ChangeNotifierProvider(create: (_) => RUNBC()),
+    ChangeNotifierProvider(create: (_) => PostProcessingProvider()),
+    ChangeNotifierProvider(create: (_) => IntegratedModelProvider()),
+    ChangeNotifierProvider(create: (_) => AddFloodModelProvider()),
+    // ChangeNotifierProvider(create: (_) => TabControllerProvider()),
 
     // ChangeNotifierProvider(create: (_) => GetModelsProvider()),
   ], child: const MyApp()));

@@ -1,3 +1,4 @@
+import 'package:coaster_control_center/FloodModelWidgets/FloodModelProviders/AddFloodModelProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -51,6 +52,7 @@ class _SelectCentersState extends State<SelectCenters>
   Widget build(BuildContext context) {
     // final _formKey1 = GlobalKey<FormState>();
     final AMP = Provider.of<AddModelProvider>(context);
+        final AFMP = Provider.of<AddFloodModelProvider>(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -185,6 +187,7 @@ class _SelectCentersState extends State<SelectCenters>
                   label: 'Save',
                   onPressed: () {
                     AMP.getPresentationSetting(lat,lon,zoomLevel);
+                    AFMP.getPresentationSetting(lat, lon, zoomLevel);
 
                     // AMP.centerLat = lat;
                     // AMP.centerLon = lon;

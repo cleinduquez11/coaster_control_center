@@ -35,7 +35,7 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
   late final AnimationController controller;
   // late final List<Map<String, dynamic>> models;
 
-  late Future<List<Map<String, dynamic>>> getModels;
+  late Future<List<Map<String, dynamic>>> getFloodModels;
 
   late List<Map<String, dynamic>> models;
   // late final List<Map<String, dynamic>> modelLists;
@@ -47,6 +47,7 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
 
   @override
   void initState() {
+        final AMP = Provider.of<AddFloodModelProvider>(context,listen: false);
     super.initState();
 
     controller = AnimationController(
@@ -54,7 +55,7 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
       vsync: this,
     );
     _mapController = MapController();
-    getModels = getModelsJson();
+    getFloodModels = AMP.getModelsJson();
   }
 
   /// Function to animate the map to a new position and zoom level
@@ -99,11 +100,6 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
     }
   }
 
-  final TextEditingController _colorMapController = TextEditingController();
-
-  final TextEditingController _modsController = TextEditingController();
-  String? _selectedColorMap;
-  String? _selectedMods;
   final List<String> colormaps = [
     'jet',
     'viridis',
@@ -194,19 +190,12 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // const Text(
-                //   "Models:",
-                //   style: TextStyle(
-                //     color: Colors.white,
-                //     fontSize: 24,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
                 const SizedBox(height: 16), // Spacing
                 RMP.loading != "loading"
                     ? FutureBuilder<List<Map<String, dynamic>>>(
-                        future: getModels, // Your async function
+                        future: getFloodModels, // Your async function
                         builder: (context, snapshot) {
+                          print(snapshot.data);
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return const Center(
@@ -225,7 +214,6 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
                           } else {
                             models = snapshot.data!;
 
-                            // String? selectedModelName;
                             return StatefulBuilder(
                               builder: (context, setState) {
                                 return Padding(
@@ -272,39 +260,7 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
                                             );
                                           }).toList(),
                                           onChanged: (selectedName) {
-                                            setState(() {
-                                              selectedModelName = selectedName;
-                                            });
-
-                                            final selectedModel =
-                                                models.firstWhere((model) =>
-                                                    model['name'] ==
-                                                    selectedName);
-                                            final position =
-                                                selectedModel['position']
-                                                    as LatLng;
-                                            final zoom =
-                                                selectedModel['zoom'] as double;
-                                            final imagePath =
-                                                selectedModel['image']
-                                                    as String;
-                                            final extents =
-                                                selectedModel['extents']
-                                                    as Map<String, LatLng>;
-
-                                            final bounds = LatLngBounds(
-                                              extents['southWest']!,
-                                              extents['northEast']!,
-                                            );
-
-                                            CMP.changeModelState(
-                                                models.indexOf(selectedModel),
-                                                selectedModel,
-                                                File(imagePath),
-                                                bounds);
-                                            _animatedMapMove(position, zoom);
-                                            print(
-                                                "Selected model: $selectedModelName");
+                              
                                           },
                                         ),
                                       ),
@@ -316,85 +272,6 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
                           }
                         },
                       )
-
-                    // FutureBuilder<List<Map<String, dynamic>>>(
-                    //     future: getModelsJson(), // Your async function
-                    //     builder: (context, snapshot) {
-                    //       if (snapshot.connectionState ==
-                    //           ConnectionState.waiting) {
-                    //         return const Center(
-                    //             child: CircularProgressIndicator());
-                    //       } else if (snapshot.hasError) {
-                    //         return Container();
-                    //       } else if (!snapshot.hasData ||
-                    //           snapshot.data!.isEmpty) {
-                    //         return Padding(
-                    //           padding: const EdgeInsets.only(left: 50.0),
-                    //           child: Text(
-                    //             'No models available',
-                    //             style: TextStyle(color: Colors.white),
-                    //           ),
-                    //         );
-                    //       } else {
-                    //         final models = snapshot.data!;
-                    //         return SizedBox(
-                    //           height:
-                    //               100, // Set a fixed height for the ListView
-                    //           child: ListView.builder(
-                    //             scrollDirection:
-                    //                 Axis.horizontal, // Horizontal scrolling
-                    //             itemCount: models.length,
-                    //             itemBuilder: (context, index) {
-                    //               final model = models[index];
-                    //               final modelName = model['name'];
-                    //               final position = model['position'] as LatLng;
-                    //               final zoom = model['zoom'] as double;
-                    //               final imagePath = model['image'] as String;
-                    //               final extents =
-                    //                   model['extents'] as Map<String, LatLng>;
-
-                    //               // Extents should have "southWest" and "northEast" keys
-                    //               final bounds = LatLngBounds(
-                    //                 extents['southWest']!,
-                    //                 extents['northEast']!,
-                    //               );
-
-                    //               return
-
-                    //                Padding(
-                    //                 padding: const EdgeInsets.symmetric(
-                    //                     horizontal: 8.0),
-                    //                 child: Center(
-                    //                   child: HoverElevatedButtonIcon(
-                    //                     onPressed: () {
-                    //                       CMP.changeModelState(index, model,
-                    //                           File(imagePath), bounds);
-
-                    //                       // Update the image and its bounds, and move the map
-                    //                       // setState(() {
-                    //                       //   indx = index;
-                    //                       //   mods = model;
-                    //                       //   _currentImageFile = File(imagePath);
-                    //                       //   _currentImageBounds = bounds;
-                    //                       // });
-                    //                       _animatedMapMove(position, zoom);
-                    //                       print("Selected index: $indx");
-                    //                     },
-                    //                     label: modelName,
-                    //                     icon: const Icon(
-                    //                       Icons.map,
-                    //                       color: Colors.white,
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //               );
-                    //             },
-                    //           ),
-                    //         );
-                    //       }
-                    //     },
-                    //   )
-
                     : Container(),
               ],
             ),
@@ -441,14 +318,9 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
                                   child: HoverElevatedButtonIcon(
                                     primaryColor: Colors.lightGreen,
                                     hoverColor: Colors.black,
-                                    // primaryColor: Colors.blue.shade900,
-                                    // hoverColor: Colors.blue.shade400,
                                     onPressed: () {
                                       ModelConfigDialog(
                                           context, CMP.mods["name"]);
-                                      // ModelConfigDialog(
-                                      //     context, CMP.mods["name"]);
-                                      // your action
                                     },
                                     label: 'Configure Model',
                                     icon: Icon(
@@ -470,17 +342,11 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
 
                               Center(
                                   child: HoverElevatedButtonIcon(
-                                    // primaryColor: Colors.red,
-                                    // hoverColor: Colors.orange,
                                     primaryColor: Colors.lightGreen,
                                     hoverColor: Colors.black,
                                     onPressed: () {
                                       RMP.runDelftModel(CMP.mods["name"]);
-                                      // showTerminalDialog(context,
-                                      //     "Running ${CMP.mods["name"]} model");
-                                      // showTerminalDialog(context, RMP.outputList);
-                                      // ModelConfigDialog(context, widget.modelName);
-                                      // your action
+                
                                     },
                                     label: 'Run',
                                     icon: Icon(
@@ -500,9 +366,6 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
                                           // RMP.runDelftAutomationModel( CMP.mods["name"]);
                                           showTerminalDialog(context,
                                               "Running ${CMP.mods["name"]} Model");
-                                          // RMP.runDelftModel( CMP.mods["name"]);
-                                          // ModelConfigDialog(context, widget.modelName);
-                                          // your action
                                         },
                                         label: 'Running Model...',
                                         icon: Icon(
@@ -523,9 +386,6 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
                                                   CMP.mods["name"]);
                                               showTerminalDialog(context,
                                                   "Running Automation on ${CMP.mods["name"]} model");
-                                              // RMP.runDelftModel( CMP.mods["name"]);
-                                              // ModelConfigDialog(context, widget.modelName);
-                                              // your action
                                             },
                                             label: 'Run Automation',
                                             icon: Icon(
@@ -545,9 +405,6 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
                                                   // RMP.runDelftAutomationModel( CMP.mods["name"]);
                                                   showTerminalDialog(context,
                                                       "Running Automation on ${CMP.mods["name"]} model");
-                                                  // RMP.runDelftModel( CMP.mods["name"]);
-                                                  // ModelConfigDialog(context, widget.modelName);
-                                                  // your action
                                                 },
                                                 label: 'Automating...',
                                                 icon: Icon(
@@ -566,8 +423,6 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
                                   child: HoverElevatedButtonIcon(
                                     primaryColor: Colors.lightGreen,
                                     hoverColor: Colors.black,
-                                    // primaryColor: Colors.green,
-                                    // hoverColor: Colors.greenAccent,
                                     onPressed: () {
                                       showDialog(
                                         context: context,
@@ -584,7 +439,7 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
                                               backgroundColor:
                                                   Colors.transparent,
                                               title: Text(
-                                                'Add Model',
+                                                'Add HMS Model',
                                                 style: TextStyle(
                                                     fontSize: 26,
                                                     fontWeight: FontWeight.w700,
@@ -950,22 +805,11 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
                                                   onPressed: () {
                                                     if (_formKey1.currentState!
                                                         .validate()) {
-                                                      // ScaffoldMessenger.of(context)
-                                                      //     .showSnackBar(
-                                                      //   SnackBar(
-                                                      //       content: Text(
-                                                      //           '${AMP.model_name} Config File Created')),
-                                                      // );
 
                                                       AMP.getModelJson();
 
                                                       AMP.runAddModelPy(
                                                           AMP.model_name);
-
-                                                      // AMP.changeWorkingDirXML(AMP.model_name);
-
-                                                      // AMP.clearModel();
-                                                      // AMP.clearModel();
 
                                                       if (AMP.loading ==
                                                           "loading") {
@@ -1009,602 +853,7 @@ class _FloodModelLandingPageState extends State<FloodModelLandingPage>
                                   ),
                                 )
                               : Container(),
-                          // FMF.isSaved
-                          //     ?
-                          //     // mainAxisAlignment: MainAxisAlignment,  // Change as per need
-
-                          //     Center(
-                          //         child: HoverElevatedButtonIcon(
-                          //           primaryColor: Colors.green,
-                          //           hoverColor: Colors.greenAccent,
-                          //           onPressed: () {
-                          //             // ModelConfigDialog(context, widget.modelName);
-                          //             // your action
-                          //           },
-                          //           label: 'Run',
-                          //           icon: Icon(
-                          //             Icons.play_arrow,
-                          //             color: Colors.white,
-                          //           ),
-                          //         ),
-                          //       )
-                          //     : Container()
-                          SizedBox(
-                            width: 20,
-                          ),
-                          HoverElevatedButtonIcon(
-                            primaryColor: Colors.lightGreen,
-                            hoverColor: Colors.black,
-                            // primaryColor: Colors.blueAccent,
-                            // hoverColor: Colors.black,
-                            onPressed: () {
-                              BC.runBC();
-                            },
-                            label: 'Create Boundary Conditions',
-                            icon: Icon(
-                              Icons.line_axis,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-
-                          RMP.outDir != " " || PP.loading != " " || PP.isPlotted
-                              ? Center(
-                                  child: Tooltip(
-                                  message: "Enter the visualization area",
-                                  child: HoverElevatedButtonIcon(
-                                    primaryColor: Colors.lightGreen,
-                                    hoverColor: Colors.black,
-                                    onPressed: () {
-                                      // imgoverlay.loadImagesFromDirectory('${dir.dir}\\output\\swan\\raw');
-
-                                      LoadImages(RMP.outDir).then(
-                                        (value) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DelftVisualization(
-                                                  bound1: RMP.bound1,
-                                                  bound2: RMP.bound2,
-                                                  center: RMP.center,
-                                                  zoom: RMP.zoom,
-                                                  overlayImages: value,
-                                                  length: value.length,
-                                                  url: RMP.outDir,
-                                                ),
-                                              ));
-                                        },
-                                      );
-
-                                      //  _loadImagesFromDirectory('${dir.dir}\\output\\swan\\raw');
-                                      // _isStarted = true;
-                                    },
-                                    label: "Visualize Results",
-                                    icon: Icon(
-                                      Icons.movie_creation_outlined,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ))
-                              : Center(
-                                  child: Tooltip(
-                                  message: "Enter the visualization area",
-                                  child: HoverElevatedButtonIcon(
-                                    primaryColor: Colors.lightGreen,
-                                    hoverColor: Colors.black,
-                                    onPressed: () {
-                                      // imgoverlay.loadImagesFromDirectory('${dir.dir}\\output\\swan\\raw');
-
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        barrierColor:
-                                            Colors.black.withOpacity(0.4),
-                                        builder: (context) {
-                                          return GlassDialog(
-                                            width: 1000,
-                                            height: 650,
-                                            child: AlertDialog(
-                                              // shadowColor: Colors.white,
-
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              title: Text(
-                                                'Visualize Model Results',
-                                                style: TextStyle(
-                                                    fontSize: 26,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.white),
-                                              ),
-                                              content: SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.50,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.50,
-                                                child: SingleChildScrollView(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            18.0),
-                                                    child: Form(
-                                                      key: _formKey1,
-                                                      child: Column(
-                                                        children: [
-                                                          const SizedBox(
-                                                            height: 40,
-                                                          ),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceEvenly,
-                                                            children: [
-                                                              // Column 1 (Reference Date)
-                                                              Expanded(
-                                                                child: Column(
-                                                                  children: [
-                                                                    const Text(
-                                                                      'Model Output file',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
-                                                                          fontSize:
-                                                                              24,
-                                                                          color:
-                                                                              Colors.white),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          20,
-                                                                    ),
-                                                                    StyledTextFormField(
-                                                                      isFilled:
-                                                                          false,
-                                                                      isFloating:
-                                                                          true,
-                                                                      readOnly:
-                                                                          true,
-                                                                      controller:
-                                                                          PP.modelOutputFile,
-                                                                      isMultiline:
-                                                                          false,
-                                                                      hintText:
-                                                                          "",
-                                                                      onTap:
-                                                                          () async {
-                                                                        PP.getModelOutputMap();
-                                                                        // AMP.getModelDirectory();
-                                                                      },
-                                                                      labelText: PP.model_output_file ==
-                                                                              ""
-                                                                          ? 'Model Output file'
-                                                                          : 'Model',
-                                                                      icon:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .folder,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          20,
-                                                                    ),
-                                                                    DropdownButtonFormField<
-                                                                        String>(
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: Colors
-                                                                            .white
-                                                                            .withOpacity(0.6),
-                                                                        fontSize:
-                                                                            12,
-                                                                        fontStyle:
-                                                                            FontStyle.italic,
-                                                                      ),
-                                                                      dropdownColor:
-                                                                          Colors
-                                                                              .black,
-                                                                      value:
-                                                                          _selectedMods,
-                                                                      decoration:
-                                                                          InputDecoration(
-                                                                        labelText:
-                                                                            'Select Model',
-                                                                        labelStyle:
-                                                                            TextStyle(color: Colors.white),
-                                                                        prefixIcon:
-                                                                            Icon(
-                                                                          Icons
-                                                                              .archive_outlined,
-                                                                          color:
-                                                                              Colors.white,
-                                                                        ),
-                                                                        border:
-                                                                            OutlineInputBorder(),
-                                                                      ),
-                                                                      validator:
-                                                                          (value) {
-                                                                        if (value ==
-                                                                                null ||
-                                                                            value.isEmpty) {
-                                                                          return "* Model selection required";
-                                                                        }
-                                                                      },
-                                                                      items: models
-                                                                          .map(
-                                                                              (mod) {
-                                                                        return DropdownMenuItem<
-                                                                            String>(
-                                                                          value:
-                                                                              mod['name'],
-                                                                          child:
-                                                                              Text(
-                                                                            mod['name'],
-                                                                            style:
-                                                                                TextStyle(color: Colors.white),
-                                                                          ),
-                                                                        );
-                                                                      }).toList(),
-                                                                      onChanged:
-                                                                          (value) {
-                                                                            PP.mods =
-                                                                              value ?? "";
-                                                                        setState(
-                                                                            () {
-
-                                                                          _selectedMods =
-                                                                              value;
-                                                                          _modsController.text =
-                                                                              value ?? "";
-                                                                          PP.mods =
-                                                                              value ?? "";
-                                                                          PP.modsController.text =
-                                                                              value!;
-                                                                        });
-                                                                      },
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 20,
-                                                          ),
-                                                          const Text(
-                                                            'Post Processing Settings',
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 24,
-                                                                color: Colors
-                                                                    .white),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 20,
-                                                          ),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceEvenly,
-                                                            children: [
-                                                              // Column 1 (Reference Date)
-                                                              Expanded(
-                                                                child: Column(
-                                                                  children: [
-                                                                    StyledTextFormField(
-                                                                      validator:
-                                                                          (p0) {
-                                                                        if (p0 ==
-                                                                                null ||
-                                                                            p0
-                                                                                .isEmpty) {
-                                                                          return null;
-                                                                        } else if (!RegExp(r'^-?\d+(\.\d+)?$').hasMatch(
-                                                                            p0)) {
-                                                                          return 'Only numbers are allowed';
-                                                                        } else if (double.parse(PP.v_max) <
-                                                                            double.parse(p0)) {
-                                                                          return 'Unacceptable Value';
-                                                                        }
-                                                                        return null; // Valid input
-                                                                      },
-                                                                      isFilled:
-                                                                          false,
-                                                                      isFloating:
-                                                                          true,
-                                                                      isMultiline:
-                                                                          false,
-                                                                      controller:
-                                                                          PP.vMinController,
-                                                                      hintText:
-                                                                          "",
-                                                                      labelText:
-                                                                          'VMIN',
-                                                                      icon:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .zoom_out,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        PP.v_min =
-                                                                            value;
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-
-                                                              // Column 2 (Start Date)
-
-                                                              const SizedBox(
-                                                                  width: 20),
-                                                              // Column 3 (End Date)
-                                                              Expanded(
-                                                                child: Column(
-                                                                  children: [
-                                                                    StyledTextFormField(
-                                                                      validator:
-                                                                          (p0) {
-                                                                        if (p0 ==
-                                                                                null ||
-                                                                            p0
-                                                                                .isEmpty) {
-                                                                          return null;
-                                                                        } else if (!RegExp(r'^-?\d+(\.\d+)?$').hasMatch(
-                                                                            p0)) {
-                                                                          return 'Only numbers are allowed';
-                                                                        } else if (double.parse(PP.v_min) >
-                                                                            double.parse(p0)) {
-                                                                          return 'Unacceptable Value';
-                                                                        }
-                                                                        return null; // Valid input
-                                                                      },
-                                                                      isFilled:
-                                                                          false,
-                                                                      isFloating:
-                                                                          true,
-                                                                      isMultiline:
-                                                                          false,
-                                                                      controller:
-                                                                          PP.vMaxController,
-                                                                      hintText:
-                                                                          "",
-                                                                      labelText:
-                                                                          'VMAX',
-                                                                      icon:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .zoom_in,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        PP.v_max =
-                                                                            value;
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 20),
-                                                              // Column 3 (End Date)
-                                                              Expanded(
-                                                                child: Column(
-                                                                  children: [
-                                                                    DropdownButtonFormField<
-                                                                        String>(
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: Colors
-                                                                            .white
-                                                                            .withOpacity(0.6),
-                                                                        fontSize:
-                                                                            12,
-                                                                        fontStyle:
-                                                                            FontStyle.italic,
-                                                                      ),
-                                                                      dropdownColor:
-                                                                          Colors
-                                                                              .black,
-                                                                      value:
-                                                                          _selectedColorMap,
-                                                                      decoration:
-                                                                          InputDecoration(
-                                                                        labelText:
-                                                                            'Color Map',
-                                                                        labelStyle:
-                                                                            TextStyle(color: Colors.white),
-                                                                        prefixIcon:
-                                                                            Icon(
-                                                                          Icons
-                                                                              .color_lens,
-                                                                          color:
-                                                                              Colors.white,
-                                                                        ),
-                                                                        border:
-                                                                            OutlineInputBorder(),
-                                                                      ),
-                                                                      items: colormaps
-                                                                          .map(
-                                                                              (colormap) {
-                                                                        return DropdownMenuItem<
-                                                                            String>(
-                                                                          value:
-                                                                              colormap,
-                                                                          child:
-                                                                              Text(
-                                                                            colormap,
-                                                                            style:
-                                                                                TextStyle(color: Colors.white),
-                                                                          ),
-                                                                        );
-                                                                      }).toList(),
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        setState(
-                                                                            () {
-                                                                          _selectedColorMap =
-                                                                              value;
-                                                                          _colorMapController.text =
-                                                                              value ?? "";
-                                                                          PP.colorMap =
-                                                                              value ?? "";
-                                                                          PP.colorMapController.text =
-                                                                              value!;
-                                                                        });
-                                                                      },
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              actions: [
-                                                ElevatedButton.icon(
-                                                  onPressed: () {
-                                                    if (_formKey1.currentState!
-                                                        .validate()) {
-                                                            PP.setMapAttributes();
-                                                      if (PP.isPlotted) {
-
-                                                      LoadRawImages(PP.model_output_file1, PP.mods).then((value) {
-                                                         Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          DelftVisualization(
-                                                                    bound1: value['bound1'],
-                                                                    bound2: value['bound2'],
-                                                                    center: value['center'],
-                                                                    zoom:
-                                                                        value['zoom'],
-                                                                    overlayImages:
-                                                                        value['overlayImages'],
-                                                                    length: value['overlayImages'].length,
-                                                                    url: PP
-                                                                        .model_output_file1,
-                                                                  ),
-                                                                ));
-                                                      },);
-
-
-                                                        // LoadImages(PP
-                                                        //         .model_output_file1)
-                                                        //     .then(
-                                                        //   (value) {
-                                                        //     Navigator.push(
-                                                        //         context,
-                                                        //         MaterialPageRoute(
-                                                        //           builder:
-                                                        //               (context) =>
-                                                        //                   DelftVisualization(
-                                                        //             bound1: PP
-                                                        //                 .bound1,
-                                                        //             bound2: PP
-                                                        //                 .bound2,
-                                                        //             center: PP
-                                                        //                 .center,
-                                                        //             zoom:
-                                                        //                 PP.zoom,
-                                                        //             overlayImages:
-                                                        //                 value,
-                                                        //             length: value
-                                                        //                 .length,
-                                                        //             url: PP
-                                                        //                 .model_output_file1,
-                                                        //           ),
-                                                        //         ));
-                                                        //   },
-                                                        // );
-                                                      } else {
-                                                        PP.visualizeResults();
-                                                      }
-
-                                                      if (AMP.loading ==
-                                                          "loading") {
-                                                        Navigator.of(context)
-                                                            .push(
-                                                                MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              FloodModelLandingPage(),
-                                                        ));
-                                                      } else {
-                                                        Navigator.of(context)
-                                                            .push(
-                                                                MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              FloodModelLandingPage(),
-                                                        ));
-                                                      }
-                                                    }
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.chevron_right_sharp,
-                                                    color: Colors.black,
-                                                  ),
-                                                  label: const Text(
-                                                    'Go',
-                                                    style: TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      );
-
-                                      // LoadImages(RMP.outDir).then(
-                                      //   (value) {
-                                      //     Navigator.push(
-                                      //         context,
-                                      //         MaterialPageRoute(
-                                      //           builder: (context) =>
-                                      //               DelftVisualization(
-                                      //             bound1: RMP.bound1,
-                                      //             bound2: RMP.bound2,
-                                      //             center: RMP.center,
-                                      //             zoom: RMP.zoom,
-                                      //             overlayImages: value,
-                                      //             length: value.length,
-                                      //             url: RMP.outDir,
-                                      //           ),
-                                      //         ));
-                                      //   },
-                                      // );
-
-                                      //  _loadImagesFromDirectory('${dir.dir}\\output\\swan\\raw');
-                                      // _isStarted = true;
-                                    },
-                                    label: "Visualize Results",
-                                    icon: Icon(
-                                      Icons.movie_creation_outlined,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ))
+                         
                         ],
                       ),
                     ],

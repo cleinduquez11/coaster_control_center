@@ -8,7 +8,7 @@ import 'package:coaster_control_center/provider/cfg.dart';
 import 'package:window_manager/window_manager.dart';
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:latlong2/latlong.dart';
 import 'package:xml/xml.dart';
 // Example usage
 
@@ -48,8 +48,8 @@ class AddFloodModelProvider with ChangeNotifier {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom, // Use custom to specify allowed extensions
-      allowedExtensions: ['xml'], // Allow only .xml files (case-insensitive)
-      dialogTitle: "Select an XML File",
+      allowedExtensions: ['hms'], // Allow only .xml files (case-insensitive)
+      dialogTitle: "Select an HMS File",
     );
 
     // print(result!.files.first.name);
@@ -104,8 +104,8 @@ class AddFloodModelProvider with ChangeNotifier {
     String curDir = Directory.current.path;
     loading = 'loading';
 
-    String absPath = "$curDir$sndPath" + "flow\\models\\$mdName";
-    String modelWorkingDir = "$curDir$sndPath" + "flow\\models\\$mdName\\dflowfm";
+    String absPath = "$curDir$sndPath" + "flood\\models\\$mdName";
+    String modelWorkingDir = "$curDir$sndPath" + "flood\\models\\$mdName\\dflowfm";
     final Directory directory = Directory(absPath);
 
     print(directory);
@@ -170,10 +170,10 @@ class AddFloodModelProvider with ChangeNotifier {
     loading = 'loading';
 
     notifyListeners();
-    await File('$curDir${sndPath}flow\\script\\copyFilesChecker.txt')
+    await File('$curDir${sndPath}flood\\script\\copyFilesChecker.txt')
         .writeAsString(' ');
     await Process.start(
-      'cmd', ['/c', 'python', '$curDir${sndPath}flow\\script\\copyModel.py'],
+      'cmd', ['/c', 'python', '$curDir${sndPath}flood\\script\\copyModel.py'],
       includeParentEnvironment: true,
 
       //  mode: ProcessStartMode.detached,
@@ -186,7 +186,7 @@ class AddFloodModelProvider with ChangeNotifier {
 
     Timer.periodic(const Duration(seconds: 1), (timer) async {
       String curDir = Directory.current.path;
-      String filePath = '$curDir${sndPath}flow\\script\\copyFilesChecker.txt';
+      String filePath = '$curDir${sndPath}flood\\script\\copyFilesChecker.txt';
 
       File file = File(filePath);
 
@@ -209,9 +209,9 @@ class AddFloodModelProvider with ChangeNotifier {
     model_description = modelDescription.text;
     modeler = modelerController.text; // Replace with your TextEditingController
 
-    final modelListFile = File('$curDir${sndPath}flow\\models\\models.json');
+    final modelListFile = File('$curDir${sndPath}flood\\models\\models.json');
     final modelConfigFile =
-        File('$curDir${sndPath}flow\\script\\copy_config.json');
+        File('$curDir${sndPath}flood\\script\\copy_config.json');
 
     // Check if the files exist, if not, create them
     if (!await modelConfigFile.exists()) {
@@ -245,7 +245,7 @@ class AddFloodModelProvider with ChangeNotifier {
 
     // New model entry
     Map<String, dynamic> newEntry = {
-      "path": '$curDir${sndPath}flow\\models\\$model_name',
+      "path": '$curDir${sndPath}flood\\models\\$model_name',
       "name": model_name,
       "modeler": modeler,
       "description": model_description,
@@ -280,17 +280,7 @@ class AddFloodModelProvider with ChangeNotifier {
       // Listen to the stream
       fileWriteController.stream.listen((isComplete) {
         if (isComplete) {
-          // callback;
-          // complete = true;
-          // model_name = "";
-          // model_description = "";
-          // model_directory = "";
-          // modelFileConfig = "";
-          // modeler = "";
-          // complete = false;
-          // centerLat = "";
-          // centerLon = "";
-          // centerZoom = "";
+
 
           modelName.text = "";
           modelDescription.text = "";
@@ -332,9 +322,9 @@ class AddFloodModelProvider with ChangeNotifier {
     model_description = modelDescription.text;
     modeler = modelerController.text;
 
-    final modelListfile = File('$curDir$sndPath\\flow\\models\\mods.lst');
+    final modelListfile = File('$curDir$sndPath\\flood\\models\\mods.lst');
     final modelConfigFileState =
-        File('$curDir$sndPath\\flow\\script\\copy.cnfg');
+        File('$curDir$sndPath\\flood\\script\\copy.cnfg');
 
     // Check if the file exists, if not, create it
     if (!await modelConfigFileState.exists()) {
@@ -352,9 +342,9 @@ $model_directory,$model_name,$modeler,$model_description
 
     isSaved = true;
 
-    String dir_path = '$curDir$sndPath' + 'flow\\models\\' + '$model_name';
+    String dir_path = '$curDir$sndPath' + 'flood\\models\\' + '$model_name';
     String newEntry = '$curDir$sndPath' +
-        'flow\\models\\' +
+        'flood\\models\\' +
         '$model_name' +
         ',$model_name,$modeler,$model_description,$centerLat,$centerLon,$centerZoom,,,,,';
 
@@ -384,4 +374,52 @@ $model_directory,$model_name,$modeler,$model_description
     print('Created Model File for $model_name');
     notifyListeners();
   }
+
+
+
+
+
+Future<List<Map<String, dynamic>>> getModelsJson() async {
+  String curDir = Directory.current.path;
+  String filePath = '$curDir${sndPath}flood\\models\\models.json';
+  final modelListfile = File(filePath);
+  List<Map<String, dynamic>> data = [];
+  if (await modelListfile.exists()) {
+    String jsonString = await modelListfile.readAsString();
+
+    List<dynamic> decoded = jsonDecode(jsonString);
+
+    // print(decoded);
+
+    // decoded.forEach((model) {
+
+    //   data.add(
+    //   {
+    //     'name': model['name'],
+    //     'position': LatLng(model['position']['lat'], model['position']['long']),
+    //     'zoom': model['zoom'],
+    //     'image':  '$curDir${sndPath}flow\\models\\${model['image']}' ,
+    //     'extents': {
+    //       'southWest': LatLng(model['extents']['southWest'][0], model['extents']['southWest'][1]),
+    //       'northEast': LatLng(model['extents']['northEast'][0], model['extents']['northEast'][1]),
+    //     },
+    //   },
+    // );
+   
+   
+    // });
+
+
+
+  for (var model in decoded) {
+    data.add({
+        'name': model['name'],
+      },);
+  }
+
+  }
+    // print(data);
+  return data;
+}
+
 }

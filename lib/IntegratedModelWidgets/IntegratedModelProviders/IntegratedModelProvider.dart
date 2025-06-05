@@ -12,7 +12,7 @@ import 'dart:io';
 import 'package:xml/xml.dart';
 // Example usage
 
-class IntegrateAddFloodModelProvider with ChangeNotifier {
+class IntegratedModelProvider with ChangeNotifier {
   String model_name = "";
   String model_description = "";
   String model_directory = "";
@@ -45,11 +45,8 @@ class IntegrateAddFloodModelProvider with ChangeNotifier {
     // String curDir =  Directory.current.path;
     // final result = await FilePicker.platform.getDirectoryPath(
     // dialogTitle: 'Select Model XML', lockParentWindow: true);
-    final result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      type: FileType.custom, // Use custom to specify allowed extensions
-      allowedExtensions: ['xml'], // Allow only .xml files (case-insensitive)
-      dialogTitle: "Select an XML File",
+    final result = await FilePicker.platform.getDirectoryPath(
+      dialogTitle: "Select Working Directory",
     );
 
     // print(result!.files.first.name);
@@ -58,12 +55,13 @@ class IntegrateAddFloodModelProvider with ChangeNotifier {
       // fileName = result.files.first.name;
       // modelDirectory.text = result.paths.first.toString();
 
+
       // String selectedFileName = result.files.first.name;
-      String selectedFilePath = result.files.first.path.toString();
+      // String selectedFilePath = result.files.first.path.toString();
 
-      model_directory = p.dirname(selectedFilePath);
+      model_directory = p.dirname(result);
 
-      modelDirectory.text = selectedFilePath;
+      modelDirectory.text = result;
 
       print(model_directory);
       notifyListeners();
