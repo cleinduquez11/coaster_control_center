@@ -101,7 +101,7 @@ flutter:
     - lib/Assets/input/wind_estimation/swan/images/
     - lib/Assets/SSI/
     - lib/Assets/BoundaryConditions/
-    - config/
+    # - config/
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

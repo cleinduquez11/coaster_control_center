@@ -55,6 +55,7 @@ class RunModelProvider with ChangeNotifier {
         .writeAsString(' ');
 
     String runName = "Running ${model_name} model";
+    print(runName);
 
     // String file = "$curDir${sndPath}flow\\models\\$model_name\\$model_name.xml";
     // String modelDirectory = "$curDir${sndPath}flow\\models\\$model_name\\";

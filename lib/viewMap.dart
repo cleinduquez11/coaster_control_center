@@ -122,7 +122,7 @@ class LMap extends StatelessWidget {
             bottom: 20,
             right: 20,
             child: Text(
-               '© MMSU coaster 2024 All rights reserved',
+             '© MMSU coaster ${DateTime.now().year.toString()} All rights reserved',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 12,

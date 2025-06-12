@@ -116,7 +116,7 @@ class _LandingPageState extends State<LandingPage> {
           ),
           Positioned(
             right: MediaQuery.of(context).size.width * 0.07,
-            top: MediaQuery.of(context).size.height * 0.2,
+            top: MediaQuery.of(context).size.height * 0.13  ,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -281,8 +281,8 @@ class _LandingPageState extends State<LandingPage> {
           Positioned(
             bottom: 20,
             right: MediaQuery.of(context).size.width * 0.01,
-            child: const Text(
-              '© MMSU coaster 2024 All rights reserved',
+            child: Text(
+              '© MMSU coaster ${DateTime.now().year.toString()} All rights reserved',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 12,
