@@ -101,41 +101,46 @@ Future<List<Map<String, dynamic>>> getModelsJson() async {
     // print(decoded);
 
     decoded.forEach((model) {
-
-    //   data.add(
-    //   {
-    //     'name': model['name'],
-    //     'position': LatLng(double.parse(model['position']['lat']), double.parse(model['position']['long'])),
-    //     'zoom': double.parse(model['zoom']),
-    //     'image': model['image'],
-    //     'extents': {
-    //       'southWest': LatLng(double.parse(model['southWest'][0]), double.parse(model['southWest'][1])),
-    //       'northEast': LatLng(double.parse(model['northEast'][0]), double.parse(model['northEast'][1])),
-    //     },
-    //   },
-    // );
+      //   data.add(
+      //   {
+      //     'name': model['name'],
+      //     'position': LatLng(double.parse(model['position']['lat']), double.parse(model['position']['long'])),
+      //     'zoom': double.parse(model['zoom']),
+      //     'image': model['image'],
+      //     'extents': {
+      //       'southWest': LatLng(double.parse(model['southWest'][0]), double.parse(model['southWest'][1])),
+      //       'northEast': LatLng(double.parse(model['northEast'][0]), double.parse(model['northEast'][1])),
+      //     },
+      //   },
+      // );
 // \\flow\\models\\
-    
+
       data.add(
-      {
-        'name': model['name'],
-        'position': LatLng(model['position']['lat'], model['position']['long']),
-        'zoom': model['zoom'],
-        'image':  '$curDir${sndPath}flow\\models\\${model['image']}' ,
-        'extents': {
-          'southWest': LatLng(model['extents']['southWest'][0], model['extents']['southWest'][1]),
-          'northEast': LatLng(model['extents']['northEast'][0], model['extents']['northEast'][1]),
+        {
+          'name': model['name'],
+          'position':
+              LatLng(model['position']['lat'], model['position']['long']),
+          'zoom': model['zoom'],
+          "description": model['description'],
+          "resolution": model['resolution'],
+          "bed_level": model['bed_level'],
+          "events": model['events'],
+          "boundary_condition": model['boundary_condition'],
+          "timestep": model['timestep'],
+          'image': '$curDir${sndPath}flow\\models\\${model['image']}',
+          'extents': {
+            'southWest': LatLng(model['extents']['southWest'][0],
+                model['extents']['southWest'][1]),
+            'northEast': LatLng(model['extents']['northEast'][0],
+                model['extents']['northEast'][1]),
+          },
         },
-      },
-    );
-   
-   
+      );
     });
   }
-    // print(data);
+  // print(data);
   return data;
 }
-
 
 Future<List<Map<String, dynamic>>> getFloodModelsJson() async {
   String curDir = Directory.current.path;
@@ -151,14 +156,13 @@ Future<List<Map<String, dynamic>>> getFloodModelsJson() async {
 
     // print(decoded);
 
-
-
-  for (var model in decoded) {
-    data.add({
-        'name': model['name'],
-      },);
-  }
-
+    for (var model in decoded) {
+      data.add(
+        {
+          'name': model['name'],
+        },
+      );
+    }
 
 //     decoded.forEach((model) {
 
@@ -175,7 +179,7 @@ Future<List<Map<String, dynamic>>> getFloodModelsJson() async {
 //     //   },
 //     // );
 // // \\flow\\models\\
-    
+
 //       data.add(
 //       {
 //         'name': model['name'],
@@ -189,14 +193,10 @@ Future<List<Map<String, dynamic>>> getFloodModelsJson() async {
 //       },
 //     );
 
-    
-   
-   
 //     });
   }
 
-  
-    // print(data);
+  // print(data);
   return data;
 }
 

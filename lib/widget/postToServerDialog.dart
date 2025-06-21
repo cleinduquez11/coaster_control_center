@@ -219,7 +219,7 @@ Future<void> showPostToServerDialog(BuildContext context) async {
                     endDateController.text,
                   );
 
-                  value.add('${dir.dir}\\output\\swan\\raw\\cnfg.json');
+                  value['overlayImages'].add('${dir.dir}\\output\\swan\\raw\\cnfg.json');
                   fup.uploadFiles(
                     nameController.text,
                     '${dir.dir}\\output\\swan\\raw\\cnfg.json',

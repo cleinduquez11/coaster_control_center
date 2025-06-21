@@ -15,10 +15,28 @@ import 'package:xml/xml.dart';
 class AddModelProvider with ChangeNotifier {
   String model_name = "";
   String model_description = "";
+  String model_resolution = "";
+  String model_topometry = "";
+  String model_boundary_condition = "";
+  String model_events = "";
+  String model_timestep = "";
   String model_directory = "";
   String modelFileConfig = "";
   String modeler = "";
   bool complete = false;
+
+
+    // 'continuous shade',
+    // 'colored contour plot'
+
+  String v_min = "-1";
+  String v_max = "7";
+  String colorMap = "jet";
+  String plotStyle = "colored contour plot";
+  final vMinController = TextEditingController();
+  final vMaxController = TextEditingController();
+  final colorMapController = TextEditingController();
+    final plotStyleController = TextEditingController();
   // double centerLat = 12.8797;
   // double centerLon = 121.7740;
   // double centerZoom = 6.5;
@@ -33,6 +51,11 @@ class AddModelProvider with ChangeNotifier {
 
   final modelName = TextEditingController();
   final modelDescription = TextEditingController();
+  final modelResolution = TextEditingController();
+  final modelTopometry = TextEditingController();
+  final modelBoundaryCondition = TextEditingController();
+  final modelEvents = TextEditingController();
+  final modelTimeStep = TextEditingController();
   final modelDirectory = TextEditingController();
   final modelerController = TextEditingController();
 
@@ -41,7 +64,8 @@ class AddModelProvider with ChangeNotifier {
   final centerZoomTextController = TextEditingController();
 
   Future getModelDirectory() async {
-      await windowManager.setAlignment(Alignment.center); // Center the Flutter window
+    await windowManager
+        .setAlignment(Alignment.center); // Center the Flutter window
     // String curDir =  Directory.current.path;
     // final result = await FilePicker.platform.getDirectoryPath(
     // dialogTitle: 'Select Model XML', lockParentWindow: true);
@@ -105,7 +129,8 @@ class AddModelProvider with ChangeNotifier {
     loading = 'loading';
 
     String absPath = "$curDir$sndPath" + "flow\\models\\$mdName";
-    String modelWorkingDir = "$curDir$sndPath" + "flow\\models\\$mdName\\dflowfm";
+    String modelWorkingDir =
+        "$curDir$sndPath" + "flow\\models\\$mdName\\dflowfm";
     final Directory directory = Directory(absPath);
 
     print(directory);
@@ -209,6 +234,11 @@ class AddModelProvider with ChangeNotifier {
     model_description = modelDescription.text;
     modeler = modelerController.text; // Replace with your TextEditingController
 
+    v_min = (double.parse(vMinController.text) - 1).toString();
+    v_max = double.parse(vMaxController.text).toString();
+    colorMap = colorMapController.text;
+    plotStyle = plotStyleController.text;
+
     final modelListFile = File('$curDir${sndPath}flow\\models\\models.json');
     final modelConfigFile =
         File('$curDir${sndPath}flow\\script\\copy_config.json');
@@ -249,6 +279,11 @@ class AddModelProvider with ChangeNotifier {
       "name": model_name,
       "modeler": modeler,
       "description": model_description,
+      "resolution": model_resolution,
+      "bed_level": model_topometry,
+      "events": model_events,
+      "boundary_condition": model_boundary_condition,
+      "timestep": model_timestep,
       "position": {
         "lat": double.parse(centerLat), // Define these variables in your class
         "long": double.parse(centerLon)
@@ -258,6 +293,12 @@ class AddModelProvider with ChangeNotifier {
         "southWest": [null, null],
         "northEast": [null, null],
       },
+  "post_processing": {
+        "v_min": double.parse(v_min),
+        "v_max": double.parse(v_max),
+        "color_map": colorMap,
+        "plot_style": plotStyle
+  },
       "zoom": double.parse(centerZoom)
     };
 
@@ -296,6 +337,16 @@ class AddModelProvider with ChangeNotifier {
           modelDescription.text = "";
           modelDirectory.text = "";
           modelerController.text = "";
+          modelResolution.text = "";
+          modelTopometry.text = "";
+          modelEvents.text = "";
+          modelBoundaryCondition.text = "";
+          modelTimeStep.text = "";
+          vMinController.text = "";
+          vMaxController.text = "";
+          colorMapController.text = "";
+          plotStyleController.text = "";
+
 
           centerLatTextController.text = "";
           centerLonTextController.text = "";

@@ -20,6 +20,7 @@ class PostProcessingProvider with ChangeNotifier {
   String v_min = "-1";
   String v_max = "7";
   String colorMap = "jet";
+  String plotStyle = "colored contour plot";
   String mods = "";
   String loading = " ";
   LatLng bound1 = LatLng(2.0525927337113665, 107.03514716442793);
@@ -32,7 +33,7 @@ class PostProcessingProvider with ChangeNotifier {
   final vMaxController = TextEditingController();
   final colorMapController = TextEditingController();
   final modsController = TextEditingController();
-
+    final plotStyleController = TextEditingController();
   Future<List<FileSystemEntity>> scanDirectory(
       String path, String extension) async {
     Directory dir = Directory(path);
@@ -58,7 +59,7 @@ class PostProcessingProvider with ChangeNotifier {
       allowMultiple: false,
       type: FileType.custom, // Use custom to specify allowed extensions
       allowedExtensions: ['nc'], // Allow only .xml files (case-insensitive)
-      dialogTitle: "Select Model Output File(_map.nc)",
+      dialogTitle: "Select Model Output File(.nc)",
     );
 
     // print(result!.files.first.name);
@@ -71,7 +72,7 @@ class PostProcessingProvider with ChangeNotifier {
       String selectedFilePath = result.files.first.path.toString();
 
       model_output_file = p.dirname(selectedFilePath);
-      model_output_file1 = p.dirname(selectedFilePath) + "\\raw\\";
+      model_output_file1 = p.dirname(selectedFilePath);
 
       modelOutputFile.text = selectedFilePath;
 
@@ -82,7 +83,7 @@ class PostProcessingProvider with ChangeNotifier {
       String extension = ".png"; // Change this to the desired file extension
 
       List<FileSystemEntity> files =
-          await scanDirectory(model_output_file1, extension);
+          await scanDirectory("$model_output_file1\\raw\\", extension);
 
       if (files.isEmpty) {
         print(
@@ -150,6 +151,7 @@ class PostProcessingProvider with ChangeNotifier {
       decoded['post_processing']["v_min"] = v_min;
       decoded['post_processing']["v_max"] = v_max;
       decoded['post_processing']["color_map"] = colorMap;
+      decoded['post_processing']["plot_style"] = plotStyle;
 
       // Write updated content back to the file
       await modelListfile
@@ -158,8 +160,8 @@ class PostProcessingProvider with ChangeNotifier {
       loading = 'loading';
       notifyListeners();
 
-      await File('$curDir${sndPath}flow\\script\\runVisualizeChecker.txt')
-          .writeAsString(' ');
+      // await File('$curDir${sndPath}flow\\script\\runVisualizeChecker.txt')
+      //     .writeAsString(' ');
 
       print("Updated run.json successfully!");
       // String file = "$curDir${sndPath}flow\\models\\$model_name\\$model_name.xml";
@@ -176,21 +178,21 @@ class PostProcessingProvider with ChangeNotifier {
         // runInShell: true,
       );
 
-      Timer.periodic(const Duration(seconds: 1), (timer) async {
-        String curDir = Directory.current.path;
-        String filePath =
-            '$curDir${sndPath}flow\\script\\runVisualizeChecker.txt';
-        File file = File(filePath);
+      // Timer.periodic(const Duration(seconds: 1), (timer) async {
+      //   String curDir = Directory.current.path;
+      //   String filePath =
+      //       '$curDir${sndPath}flow\\script\\runVisualizeChecker.txt';
+      //   File file = File(filePath);
 
-        String c = await file.readAsString();
+      //   String c = await file.readAsString();
 
-        if (c == 'finished') {
-          loading = " ";
-          print("Plotting Complete");
-          timer.cancel();
-          notifyListeners();
-        }
-      });
+      //   if (c == 'finished') {
+      //     loading = " ";
+      //     print("Plotting Complete");
+      //     timer.cancel();
+      //     notifyListeners();
+      //   }
+      // });
     } else {
       print("run.json file not found!");
     }

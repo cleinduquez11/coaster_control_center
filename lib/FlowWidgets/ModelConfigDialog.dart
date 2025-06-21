@@ -36,7 +36,7 @@ Future<void> ModelConfigDialog(BuildContext context, String modelName) async {
                   const EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.50,
-                // height: MediaQuery.of(context).size.height * 0.50,
+                // height: MediaQuery.of(context).size.height * 0.90,
                 // width: MediaQuery.of(context).size.width * 0.50,
                 // height: MediaQuery.of(context).size.height * 0.50,
                 child: Form(
@@ -64,6 +64,7 @@ Future<void> ModelConfigDialog(BuildContext context, String modelName) async {
                           crossAxisSpacing: 10, // Spacing between columns
                           mainAxisSpacing: 5, //
                           childAspectRatio: 6,
+
                           physics: NeverScrollableScrollPhysics(),
 
                           padding: EdgeInsets.all(16),
@@ -523,57 +524,83 @@ Future<void> ModelConfigDialog(BuildContext context, String modelName) async {
                       const SizedBox(
                         height: 20,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: TextFormField(
-                          // validator: (value) {
-                          //   if (value == null || value.isEmpty) {
-                          //     return '* Output directory required';
-                          //   }
-                          //   return null;
-                          // },
-                          controller: FMF.spwFile,
-                          onTap: () async {
-                            //  topo.getRawTopography();
-                            // tpd.runTyphoonCmd(dir.dir);
-                            FMF.getSpiderWebFile(modelName);
-                            //  final selected =  await selectFile();
-                          },
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            floatingLabelBehavior:
-                                FloatingLabelBehavior.always, // Defau
-                            labelStyle: TextStyle(color: Colors.white),
-                            // hintText: 'default: 300',
-                            fillColor: Colors.white,
-                            hintStyle: TextStyle(
-                                color: Colors.white,
-                                fontStyle: FontStyle.italic,
-                                fontSize: 12),
-                            focusColor: Colors.white,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                            labelText: FMF.q == "-"
-                                ? 'Select Typhoon Track File'
-                                : 'Typhoon Track file',
-                            suffixIcon: Icon(
-                              Icons.folder,
-                              color: Colors.white,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: TextFormField(
+                                controller: FMF.spwFile,
+                                onTap: () async {
+                                  FMF.getSpiderWebFile(modelName);
+                                },
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  labelStyle: TextStyle(color: Colors.white),
+                                  hintStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 12,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  labelText: FMF.q == "-"
+                                      ? 'Select Typhoon Track File'
+                                      : 'Typhoon Track File',
+                                  suffixIcon:
+                                      Icon(Icons.folder, color: Colors.white),
+                                ),
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.6),
+                                  fontSize: 12,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
                             ),
                           ),
-                          style: TextStyle(
-                              color: Colors.white.withOpacity(0.6),
-                              fontSize: 12,
-                              fontStyle: FontStyle.italic),
-
-                          // readOnly: true,
-                        ),
+                          SizedBox(width: 20),
+                          Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: TextFormField(
+                                controller: FMF.tName,
+                                decoration: InputDecoration(
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  labelStyle: TextStyle(color: Colors.white),
+                                  hintStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 12,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  labelText: FMF.t_name == ""
+                                      ? 'Input Typhoon Name'
+                                      : 'Input Typhoon Name',
+                                  suffixIcon:
+                                      Icon(Icons.folder, color: Colors.white),
+                                ),
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.6),
+                                  fontSize: 12,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(
                         height: 20,
                       ),
-                      
-                                         const SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Padding(
@@ -690,11 +717,13 @@ Future<void> ModelConfigDialog(BuildContext context, String modelName) async {
                             onPressed: () {
                               if (_formKey1.currentState!.validate()) {
                                 showTopSnackBar(
-                                    context, '$modelName Config File Created', Colors.green);
+                                    context,
+                                    '$modelName Config File Created',
+                                    Colors.green);
 
                                 // ScaffoldMessenger.of(context).showSnackBar(
                                 //   SnackBar(
-                                    
+
                                 //     behavior: SnackBarBehavior
                                 //         .floating, // Allows positioning
                                 //     margin: EdgeInsets.only(
@@ -875,34 +904,33 @@ Future<void> ModelConfigDialog(BuildContext context, String modelName) async {
                             child: ElevatedButton.icon(
                               onPressed: () {
                                 if (_formKey2.currentState!.validate()) {
-                                  showTopSnackBar(context,
-                                      '$modelName Automation File Created', Colors.orangeAccent);
+                                  showTopSnackBar(
+                                      context,
+                                      '$modelName Automation File Created',
+                                      Colors.orangeAccent);
                                   FMF.getValsAutomate(modelName);
 
-
-
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   SnackBar(
-                                //     behavior: SnackBarBehavior
-                                //         .floating, // Allows positioning
-                                //     margin: EdgeInsets.only(
-                                //         top: 50,
-                                //         left: 16,
-                                //         right: 16), // Higher position
-                                //     padding: EdgeInsets.symmetric(
-                                //         horizontal: 20,
-                                //         vertical: 16), // Add padding
-                                //     backgroundColor:
-                                //         Colors.green, // Make it green
-                                //     content: Text(
-                                //       '$modelName Automation File Created',
-                                //       style: TextStyle(
-                                //           color: Colors.white,
-                                //           fontWeight: FontWeight.bold),
-                                //     ),
-                                //   ),
-                                // );
-
+                                  // ScaffoldMessenger.of(context).showSnackBar(
+                                  //   SnackBar(
+                                  //     behavior: SnackBarBehavior
+                                  //         .floating, // Allows positioning
+                                  //     margin: EdgeInsets.only(
+                                  //         top: 50,
+                                  //         left: 16,
+                                  //         right: 16), // Higher position
+                                  //     padding: EdgeInsets.symmetric(
+                                  //         horizontal: 20,
+                                  //         vertical: 16), // Add padding
+                                  //     backgroundColor:
+                                  //         Colors.green, // Make it green
+                                  //     content: Text(
+                                  //       '$modelName Automation File Created',
+                                  //       style: TextStyle(
+                                  //           color: Colors.white,
+                                  //           fontWeight: FontWeight.bold),
+                                  //     ),
+                                  //   ),
+                                  // );
 
                                   // ScaffoldMessenger.of(context).showSnackBar(
                                   //   SnackBar(

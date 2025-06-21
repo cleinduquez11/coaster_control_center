@@ -117,7 +117,7 @@ class RunModelProvider with ChangeNotifier {
           dynamic decoded = jsonDecode(jsonString);
           print(decoded);
 
-          outDir = "${decoded['output_directory']}\\raw\\";
+          outDir = "${decoded['output_directory']}";
           loading = "init";
           print(c);
           print('Model Processing Completed');

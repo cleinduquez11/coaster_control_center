@@ -870,24 +870,24 @@ class _IntegratedModelLandingPageState extends State<IntegratedModelLandingPage>
                                 onPressed: () {
                                   // imgoverlay.loadImagesFromDirectory('${dir.dir}\\output\\swan\\raw');
                   
-                                  LoadImages(RMP.outDir).then(
-                                    (value) {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                DelftVisualization(
-                                              bound1: RMP.bound1,
-                                              bound2: RMP.bound2,
-                                              center: RMP.center,
-                                              zoom: RMP.zoom,
-                                              overlayImages: value,
-                                              length: value.length,
-                                              url: RMP.outDir,
-                                            ),
-                                          ));
-                                    },
-                                  );
+                                  // LoadImages(RMP.outDir).then(
+                                  //   (value) {
+                                  //     Navigator.push(
+                                  //         context,
+                                  //         MaterialPageRoute(
+                                  //           builder: (context) =>
+                                  //               DelftVisualization(
+                                  //             bound1: RMP.bound1,
+                                  //             bound2: RMP.bound2,
+                                  //             center: RMP.center,
+                                  //             zoom: RMP.zoom,
+                                  //             overlayImages: value,
+                                  //             length: value.length,
+                                  //             url: RMP.outDir,
+                                  //           ),
+                                  //         ));
+                                  //   },
+                                  // );
                   
                                   //  _loadImagesFromDirectory('${dir.dir}\\output\\swan\\raw');
                                   // _isStarted = true;
@@ -1298,26 +1298,26 @@ class _IntegratedModelLandingPageState extends State<IntegratedModelLandingPage>
                                                         PP.setMapAttributes();
                                                   if (PP.isPlotted) {
                   
-                                                  LoadRawImages(PP.model_output_file1, PP.mods).then((value) {
-                                                     Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder:
-                                                                  (context) =>
-                                                                      DelftVisualization(
-                                                                bound1: value['bound1'],
-                                                                bound2: value['bound2'],
-                                                                center: value['center'],
-                                                                zoom:
-                                                                    value['zoom'],
-                                                                overlayImages:
-                                                                    value['overlayImages'],
-                                                                length: value['overlayImages'].length,
-                                                                url: PP
-                                                                    .model_output_file1,
-                                                              ),
-                                                            ));
-                                                  },);
+                                                  // LoadRawImages(PP.model_output_file1, PP.mods).then((value) {
+                                                  //    Navigator.push(
+                                                  //           context,
+                                                  //           MaterialPageRoute(
+                                                  //             builder:
+                                                  //                 (context) =>
+                                                  //                     DelftVisualization(
+                                                  //               bound1: value['bound1'],
+                                                  //               bound2: value['bound2'],
+                                                  //               center: value['center'],
+                                                  //               zoom:
+                                                  //                   value['zoom'],
+                                                  //               overlayImages:
+                                                  //                   value['overlayImages'],
+                                                  //               length: value['overlayImages'].length,
+                                                  //               url: PP
+                                                  //                   .model_output_file1,
+                                                  //             ),
+                                                  //           ));
+                                                  // },);
                   
                   
                                                     // LoadImages(PP

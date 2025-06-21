@@ -195,7 +195,7 @@ class LMap extends StatelessWidget {
                     // imgoverlay.loadImagesFromDirectory('${dir.dir}\\output\\swan\\raw');
                 
                     LoadImages('${dir.dir}\\output\\swan\\raw').then((value) {
-                         Navigator.push(context, MaterialPageRoute(builder: (context) => SandBoxVisualization(overlayImages: value,length: value.length, url: dir.dir,),));
+                         Navigator.push(context, MaterialPageRoute(builder: (context) => SandBoxVisualization(overlayImages: value['overlayImages'],length: value.length, url: dir.dir,),));
                     },);
                 
                  

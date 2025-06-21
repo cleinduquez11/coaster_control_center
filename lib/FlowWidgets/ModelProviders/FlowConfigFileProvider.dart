@@ -19,10 +19,12 @@ class FlowConfigFileProvider with ChangeNotifier {
   String dt_max = '';
   String t_zone = '';
   String t_unit = '';
+  String t_name = '';
   bool isSaved = false;
 //Computational Area Parameters
 
   final referrenceDate = TextEditingController(text: "");
+  final tName = TextEditingController(text: "");
   final tStart = TextEditingController(text: '');
   final tStop = TextEditingController(text: '');
   final dtUser = TextEditingController(text: '');
@@ -629,6 +631,24 @@ Future<void> updateForcingFileForQuantity({
     String curDir = Directory.current.path;
     String absPath = "$curDir$sndPath" + "flow\\models\\$model_name\\dflowfm\\";
     final Directory directory = Directory(absPath);
+    referrence_date = referrenceDate.text.toString();
+    t_start = tStart.text.toString();
+    t_stop = tStop.text.toString();
+    t_name = tName.text.toString();
+    // dt_user = dtUser.text.toString();
+    // dt_nodal = dtNodal.text.toString();
+
+    String referrenceDateFormatted =
+        "${referrence_date.substring(0, 4)}-${referrence_date.substring(4, 6)}-${referrence_date.substring(6, 8)}";
+    String startFormatted =
+        "${t_start.substring(0, 4)}-${t_start.substring(4, 6)}-${t_start.substring(6, 8)} ${t_start.substring(8, 10)}:${t_start.substring(10, 12)}:${t_start.substring(12, 14)}";
+    String endFormatted =
+        "${t_stop.substring(0, 4)}-${t_stop.substring(4, 6)}-${t_stop.substring(6, 8)} ${t_stop.substring(8, 10)}:${t_stop.substring(10, 12)}:${t_stop.substring(12, 14)}";
+
+    int t_start_in_seconds =
+        calculateSecondsBetweenDates(referrenceDateFormatted, startFormatted);
+    int t_stop_in_seconds =
+        calculateSecondsBetweenDates(referrenceDateFormatted, endFormatted);
 
 
     final modelConfigFile = File('$curDir${sndPath}flow\\script\\run.json');
@@ -638,15 +658,20 @@ Future<void> updateForcingFileForQuantity({
     }
 
 
+
+
         Map<String, dynamic> modelAutomationConfig = {
       "model_name": model_name,
       "output_directory": OutputDir,
       "length": 0,
+      't_name': t_name,
+      "start_date": startFormatted,
       "post_processing": {
         "output_file":"",
         "v_min": 0,
         "v_max": 3,
-        "color_map": ""
+        "color_map": "",
+        "plot_style": ""
       }
 
     };
@@ -705,23 +730,6 @@ await updateForcingFileForQuantity(
       print("The directory does not exist.");
     }
 
-    referrence_date = referrenceDate.text.toString();
-    t_start = tStart.text.toString();
-    t_stop = tStop.text.toString();
-    // dt_user = dtUser.text.toString();
-    // dt_nodal = dtNodal.text.toString();
-
-    String referrenceDateFormatted =
-        "${referrence_date.substring(0, 4)}-${referrence_date.substring(4, 6)}-${referrence_date.substring(6, 8)}";
-    String startFormatted =
-        "${t_start.substring(0, 4)}-${t_start.substring(4, 6)}-${t_start.substring(6, 8)} ${t_start.substring(8, 10)}:${t_start.substring(10, 12)}:${t_start.substring(12, 14)}";
-    String endFormatted =
-        "${t_stop.substring(0, 4)}-${t_stop.substring(4, 6)}-${t_stop.substring(6, 8)} ${t_stop.substring(8, 10)}:${t_stop.substring(10, 12)}:${t_stop.substring(12, 14)}";
-
-    int t_start_in_seconds =
-        calculateSecondsBetweenDates(referrenceDateFormatted, startFormatted);
-    int t_stop_in_seconds =
-        calculateSecondsBetweenDates(referrenceDateFormatted, endFormatted);
 
     inputfile = '''
 # Generated on 2024-07-22 08:55:48

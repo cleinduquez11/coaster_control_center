@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:coaster_control_center/FlowWidgets/DelftVisualize.dart';
 import 'package:coaster_control_center/FlowWidgets/ModelProviders/postProcessingProvider.dart';
 import 'package:coaster_control_center/provider/fxnImageOVerlay.dart';
@@ -102,9 +103,14 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
   }
 
   final TextEditingController _colorMapController = TextEditingController();
-
+  final TextEditingController _addColorMapController = TextEditingController();
+    final TextEditingController _plotStyleController = TextEditingController();
+        final TextEditingController _plotStylePPController = TextEditingController();
   final TextEditingController _modsController = TextEditingController();
   String? _selectedColorMap;
+  String? _selectedAddColorMap;
+  String? _selectedplotStyle;
+    String? _selectedplotStylePP;
   String? _selectedMods;
   final List<String> colormaps = [
     'jet',
@@ -115,6 +121,11 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
     'cividis',
     'coolwarm',
     'twilight'
+  ]; // Add more colormaps as needed
+
+    final List<String> plotstyles = [
+    'continuous shade',
+    'colored contour plot'
   ]; // Add more colormaps as needed
 
   @override
@@ -430,6 +441,76 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
             ),
           ),
 
+  CMP.indx == -999? Container(): Positioned(
+  top: 20,
+  right: 20,
+  child: IconButton(
+    icon: const Icon(Icons.info_outline, color: Colors.blue, size: 50),
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                width: 700,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Model: ${CMP.mods['name']}',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _infoRow('Description', CMP.mods['description']),
+                    _infoRow('Resolution', CMP.mods['resolution']),
+                    _infoRow('Bed Level', CMP.mods['bed_level']),
+                    _infoRow('Events', CMP.mods['events']),
+                    _infoRow('Boundary Condition', CMP.mods['boundary_condition']),
+                    _infoRow('Timestep', CMP.mods['timestep']),
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text(
+                          'Close',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+  ),
+),
+
+
           AMP.loading == "loading"
               ? Center(
                   child: GlassDialog(
@@ -607,7 +688,7 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
                                         builder: (context) {
                                           return GlassDialog(
                                             width: 1000,
-                                            height: 750,
+                                            height: 850,
                                             child: AlertDialog(
                                               // shadowColor: Colors.white,
 
@@ -628,7 +709,7 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
                                                 height: MediaQuery.of(context)
                                                         .size
                                                         .height *
-                                                    0.50,
+                                                    0.60,
                                                 child: SingleChildScrollView(
                                                   child: Padding(
                                                     padding:
@@ -639,10 +720,7 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
                                                       child: Column(
                                                         children: [
                                                           const SizedBox(
-                                                            height: 40,
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 20,
+                                                            height: 60,
                                                           ),
                                                           Row(
                                                             mainAxisAlignment:
@@ -720,29 +798,229 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
                                                                   ],
                                                                 ),
                                                               ),
+
+                                                              const SizedBox(
+                                                                  width: 20),
+                                                              // Column 3 (End Date)
+                                                              Expanded(
+                                                                child: Column(
+                                                                  children: [
+                                                                    StyledTextFormField(
+                                                                      isFilled:
+                                                                          false,
+                                                                      isFloating:
+                                                                          true,
+                                                                      isMultiline:
+                                                                          false,
+                                                                      controller:
+                                                                          AMP.modelResolution,
+                                                                      hintText:
+                                                                          "",
+                                                                      labelText:
+                                                                          'Model Resolution',
+                                                                      icon:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .lens_blur_outlined,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        AMP.model_resolution =
+                                                                            value;
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 20),
+                                                              // Column 3 (End Date)
+                                                              Expanded(
+                                                                child: Column(
+                                                                  children: [
+                                                                    StyledTextFormField(
+                                                                      isFilled:
+                                                                          false,
+                                                                      isFloating:
+                                                                          true,
+                                                                      isMultiline:
+                                                                          false,
+                                                                      controller:
+                                                                          AMP.modelTopometry,
+                                                                      hintText:
+                                                                          "",
+                                                                      labelText:
+                                                                          'Model Bed Level',
+                                                                      icon:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .landscape,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        AMP.model_topometry =
+                                                                            value;
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
                                                             ],
                                                           ),
                                                           const SizedBox(
                                                             height: 40,
                                                           ),
-                                                          StyledTextFormField(
-                                                            isFilled: false,
-                                                            isFloating: true,
-                                                            isMultiline: true,
-                                                            controller: AMP
-                                                                .modelDescription,
-                                                            hintText: "",
-                                                            labelText:
-                                                                'Model Description',
-                                                            icon: Icon(
-                                                              Icons.description,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                            onChanged: (value) {
-                                                              AMP.model_description =
-                                                                  value;
-                                                            },
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceEvenly,
+                                                            children: [
+                                                              // Column 1 (Reference Date)
+                                                              Expanded(
+                                                                child: Column(
+                                                                  children: [
+                                                                    StyledTextFormField(
+                                                                      isFilled:
+                                                                          false,
+                                                                      isFloating:
+                                                                          true,
+                                                                      isMultiline:
+                                                                          true,
+                                                                      controller:
+                                                                          AMP.modelDescription,
+                                                                      hintText:
+                                                                          "",
+                                                                      labelText:
+                                                                          'Model Description',
+                                                                      icon:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .description,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        AMP.model_description =
+                                                                            value;
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+
+                                                              // Column 2 (Start Date)
+
+                                                              const SizedBox(
+                                                                  width: 20),
+                                                              // Column 3 (End Date)
+                                                              Expanded(
+                                                                child: Column(
+                                                                  children: [
+                                                                    StyledTextFormField(
+                                                                      isFilled:
+                                                                          false,
+                                                                      isFloating:
+                                                                          true,
+                                                                      isMultiline:
+                                                                          false,
+                                                                      controller:
+                                                                          AMP.modelEvents,
+                                                                      hintText:
+                                                                          "",
+                                                                      labelText:
+                                                                          'Events',
+                                                                      icon:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .event,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        AMP.model_events =
+                                                                            value;
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 20),
+                                                              // Column 3 (End Date)
+                                                              Expanded(
+                                                                child: Column(
+                                                                  children: [
+                                                                    StyledTextFormField(
+                                                                      isFilled:
+                                                                          false,
+                                                                      isFloating:
+                                                                          true,
+                                                                      isMultiline:
+                                                                          false,
+                                                                      controller:
+                                                                          AMP.modelBoundaryCondition,
+                                                                      hintText:
+                                                                          "",
+                                                                      labelText:
+                                                                          'Model Boundary Condition',
+                                                                      icon:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .crop_outlined,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        AMP.model_boundary_condition =
+                                                                            value;
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 20),
+                                                              // Column 3 (End Date)
+                                                              Expanded(
+                                                                child: Column(
+                                                                  children: [
+                                                                    StyledTextFormField(
+                                                                      isFilled:
+                                                                          false,
+                                                                      isFloating:
+                                                                          true,
+                                                                      isMultiline:
+                                                                          false,
+                                                                      controller:
+                                                                          AMP.modelTimeStep,
+                                                                      hintText:
+                                                                          "",
+                                                                      labelText:
+                                                                          'Model Time Step',
+                                                                      icon:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .timer,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        AMP.model_timestep =
+                                                                            value;
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
                                                           const SizedBox(
                                                             height: 30,
@@ -935,6 +1213,277 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
                                                             height: 20,
                                                           ),
                                                           const Text(
+                                                            'Default Visualization Settings',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 24,
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceEvenly,
+                                                            children: [
+                                                              // Column 1 (Reference Date)
+                                                              Expanded(
+                                                                child: Column(
+                                                                  children: [
+                                                                    StyledTextFormField(
+                                                                      validator:
+                                                                          (p0) {
+                                                                        if (p0 ==
+                                                                                null ||
+                                                                            p0
+                                                                                .isEmpty) {
+                                                                          return null;
+                                                                        } else if (!RegExp(r'^-?\d+(\.\d+)?$').hasMatch(
+                                                                            p0)) {
+                                                                          return 'Only numbers are allowed';
+                                                                        } else if (double.parse(AMP.v_max) <
+                                                                            double.parse(p0)) {
+                                                                          return 'Unacceptable Value';
+                                                                        }
+                                                                        return null; // Valid input
+                                                                      },
+                                                                      isFilled:
+                                                                          false,
+                                                                      isFloating:
+                                                                          true,
+                                                                      isMultiline:
+                                                                          false,
+                                                                      controller:
+                                                                          AMP.vMinController,
+                                                                      hintText:
+                                                                          "",
+                                                                      labelText:
+                                                                          'VMIN',
+                                                                      icon:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .zoom_out,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        AMP.v_min =
+                                                                            value;
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+
+                                                              // Column 2 (Start Date)
+
+                                                              const SizedBox(
+                                                                  width: 20),
+                                                              // Column 3 (End Date)
+                                                              Expanded(
+                                                                child: Column(
+                                                                  children: [
+                                                                    StyledTextFormField(
+                                                                      validator:
+                                                                          (p0) {
+                                                                        if (p0 ==
+                                                                                null ||
+                                                                            p0
+                                                                                .isEmpty) {
+                                                                          return null;
+                                                                        } else if (!RegExp(r'^-?\d+(\.\d+)?$').hasMatch(
+                                                                            p0)) {
+                                                                          return 'Only numbers are allowed';
+                                                                        } else if (double.parse(AMP.v_min) >
+                                                                            double.parse(p0)) {
+                                                                          return 'Unacceptable Value';
+                                                                        }
+                                                                        return null; // Valid input
+                                                                      },
+                                                                      isFilled:
+                                                                          false,
+                                                                      isFloating:
+                                                                          true,
+                                                                      isMultiline:
+                                                                          false,
+                                                                      controller:
+                                                                          AMP.vMaxController,
+                                                                      hintText:
+                                                                          "",
+                                                                      labelText:
+                                                                          'VMAX',
+                                                                      icon:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .zoom_in,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        AMP.v_max =
+                                                                            value;
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+
+                                                              const SizedBox(
+                                                                  width: 20),
+                                                              Expanded(
+                                                                child: Column(
+                                                                  children: [
+                                                                    DropdownButtonFormField<
+                                                                        String>(
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .white
+                                                                            .withOpacity(0.6),
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontStyle:
+                                                                            FontStyle.italic,
+                                                                      ),
+                                                                      dropdownColor:
+                                                                          Colors
+                                                                              .black,
+                                                                      value:
+                                                                          _selectedColorMap,
+                                                                      decoration:
+                                                                          InputDecoration(
+                                                                        labelText:
+                                                                            'Plot Style',
+                                                                        labelStyle:
+                                                                            TextStyle(color: Colors.white),
+                                                                        prefixIcon:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .style,
+                                                                          color:
+                                                                              Colors.white,
+                                                                        ),
+                                                                        border:
+                                                                            OutlineInputBorder(),
+                                                                      ),
+                                                                      items: plotstyles
+                                                                          .map(
+                                                                              (pl) {
+                                                                        return DropdownMenuItem<
+                                                                            String>(
+                                                                          value:
+                                                                              pl,
+                                                                          child:
+                                                                              Text(
+                                                                            pl,
+                                                                            style:
+                                                                                TextStyle(color: Colors.white),
+                                                                          ),
+                                                                        );
+                                                                      }).toList(),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        setState(
+                                                                            () {
+                                                                          _selectedplotStyle =
+                                                                              value;
+                                                                          _plotStyleController.text =
+                                                                              value ?? "";
+                                                                          AMP.plotStyle =
+                                                                              value ?? "";
+                                                                          AMP.plotStyleController.text =
+                                                                              value!;
+                                                                        });
+                                                                      },
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+
+                                                              const SizedBox(
+                                                                  width: 20),
+                                                              // Column 3 (End Date)
+                                                              Expanded(
+                                                                child: Column(
+                                                                  children: [
+                                                                    DropdownButtonFormField<
+                                                                        String>(
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .white
+                                                                            .withOpacity(0.6),
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontStyle:
+                                                                            FontStyle.italic,
+                                                                      ),
+                                                                      dropdownColor:
+                                                                          Colors
+                                                                              .black,
+                                                                      value:
+                                                                          _selectedColorMap,
+                                                                      decoration:
+                                                                          InputDecoration(
+                                                                        labelText:
+                                                                            'Color Map',
+                                                                        labelStyle:
+                                                                            TextStyle(color: Colors.white),
+                                                                        prefixIcon:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .color_lens,
+                                                                          color:
+                                                                              Colors.white,
+                                                                        ),
+                                                                        border:
+                                                                            OutlineInputBorder(),
+                                                                      ),
+                                                                      items: colormaps
+                                                                          .map(
+                                                                              (colormap) {
+                                                                        return DropdownMenuItem<
+                                                                            String>(
+                                                                          value:
+                                                                              colormap,
+                                                                          child:
+                                                                              Text(
+                                                                            colormap,
+                                                                            style:
+                                                                                TextStyle(color: Colors.white),
+                                                                          ),
+                                                                        );
+                                                                      }).toList(),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        setState(
+                                                                            () {
+                                                                          _selectedAddColorMap =
+                                                                              value;
+                                                                          _addColorMapController.text =
+                                                                              value ?? "";
+                                                                          AMP.colorMap =
+                                                                              value ?? "";
+                                                                          AMP.colorMapController.text =
+                                                                              value!;
+                                                                        });
+                                                                      },
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 30,
+                                                          ),
+                                                          const Text(
                                                             'Input Model',
                                                             style: TextStyle(
                                                                 fontWeight:
@@ -1097,13 +1646,16 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     DelftVisualization(
+                                                      tName: value['tName'],
                                                   bound1: RMP.bound1,
                                                   bound2: RMP.bound2,
                                                   center: RMP.center,
                                                   zoom: RMP.zoom,
-                                                  overlayImages: value,
-                                                  length: value.length,
+                                                  startDate: value['startDate'],
+                                                  overlayImages: value['overlayImages'],
+                                                  length: value['length'],
                                                   url: RMP.outDir,
+                                                  his: value['his'],
                                                 ),
                                               ));
                                         },
@@ -1285,11 +1837,11 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
                                                                       }).toList(),
                                                                       onChanged:
                                                                           (value) {
-                                                                            PP.mods =
-                                                                              value ?? "";
+                                                                        PP.mods =
+                                                                            value ??
+                                                                                "";
                                                                         setState(
                                                                             () {
-
                                                                           _selectedMods =
                                                                               value;
                                                                           _modsController.text =
@@ -1430,6 +1982,79 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
                                                                   ],
                                                                 ),
                                                               ),
+
+                                                                                                                            const SizedBox(
+                                                                  width: 20),
+                                                              Expanded(
+                                                                child: Column(
+                                                                  children: [
+                                                                    DropdownButtonFormField<
+                                                                        String>(
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .white
+                                                                            .withOpacity(0.6),
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontStyle:
+                                                                            FontStyle.italic,
+                                                                      ),
+                                                                      dropdownColor:
+                                                                          Colors
+                                                                              .black,
+                                                                      value:
+                                                                          _selectedplotStylePP,
+                                                                      decoration:
+                                                                          InputDecoration(
+                                                                        labelText:
+                                                                            'Plot Style',
+                                                                        labelStyle:
+                                                                            TextStyle(color: Colors.white),
+                                                                        prefixIcon:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .style,
+                                                                          color:
+                                                                              Colors.white,
+                                                                        ),
+                                                                        border:
+                                                                            OutlineInputBorder(),
+                                                                      ),
+                                                                      items: plotstyles
+                                                                          .map(
+                                                                              (pl) {
+                                                                        return DropdownMenuItem<
+                                                                            String>(
+                                                                          value:
+                                                                              pl,
+                                                                          child:
+                                                                              Text(
+                                                                            pl,
+                                                                            style:
+                                                                                TextStyle(color: Colors.white),
+                                                                          ),
+                                                                        );
+                                                                      }).toList(),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        setState(
+                                                                            () {
+                                                                          _selectedplotStylePP =
+                                                                              value;
+                                                                          _plotStylePPController.text =
+                                                                              value ?? "";
+                                                                          PP.plotStyle =
+                                                                              value ?? "";
+                                                                          PP.plotStyleController.text =
+                                                                              value!;
+                                                                        });
+                                                                      },
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+
                                                               const SizedBox(
                                                                   width: 20),
                                                               // Column 3 (End Date)
@@ -1515,30 +2140,43 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
                                                   onPressed: () {
                                                     if (_formKey1.currentState!
                                                         .validate()) {
-                                                            PP.setMapAttributes();
+                                                      PP.setMapAttributes();
                                                       if (PP.isPlotted) {
-
-                                                      LoadRawImages(PP.model_output_file1, PP.mods).then((value) {
-                                                         Navigator.push(
+                                                        LoadRawImages(
+                                                                PP.model_output_file1,
+                                                                PP.mods)
+                                                            .then(
+                                                          (value) {
+                                                            print(value);
+                                                            Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
                                                                   builder:
                                                                       (context) =>
                                                                           DelftVisualization(
-                                                                    bound1: value['bound1'],
-                                                                    bound2: value['bound2'],
-                                                                    center: value['center'],
-                                                                    zoom:
-                                                                        value['zoom'],
+                                                                            startDate: value['startDate'],
+                                                                            tName: value['tName'],
+                                                                    bound1: value[
+                                                                        'bound1'],
+                                                                    bound2: value[
+                                                                        'bound2'],
+                                                                    center: value[
+                                                                        'center'],
+                                                                    zoom: value[
+                                                                        'zoom'],
                                                                     overlayImages:
-                                                                        value['overlayImages'],
-                                                                    length: value['overlayImages'].length,
+                                                                        value[
+                                                                            'overlayImages'],
+                                                                    length: value[
+                                                                            'length']
+                                                                        ,
+                                                                        his: value['his'],
                                                                     url: PP
                                                                         .model_output_file1,
                                                                   ),
                                                                 ));
-                                                      },);
-
+                                                          },
+                                                        );
 
                                                         // LoadImages(PP
                                                         //         .model_output_file1)
@@ -1643,8 +2281,8 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
           Positioned(
             bottom: 20,
             right: MediaQuery.of(context).size.width * 0.01,
-            child:   Text(
-             '© MMSU coaster ${DateTime.now().year.toString()} All rights reserved',
+            child: Text(
+              '© MMSU coaster ${DateTime.now().year.toString()} All rights reserved',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 12,
@@ -1654,5 +2292,28 @@ class _FutureWidgetSelectorState extends State<FutureWidgetSelector>
         ],
       ),
     );
+
+    
   }
+
+  Widget _infoRow(String label, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: RichText(
+      text: TextSpan(
+        style: const TextStyle(fontSize: 16, color: Colors.white),
+        children: [
+          TextSpan(
+            text: '$label: ',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          TextSpan(text: value),
+        ],
+      ),
+    ),
+  );
+}
+
+
+  
 }
